@@ -1,2 +1,8 @@
+# Ignore data dumps
 github-data/*.json.gz
+
+# Ignore postgres database directory
 pgdata/
+
+# Ignore random OS files
+.DS_Store
