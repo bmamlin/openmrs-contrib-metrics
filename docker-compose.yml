@@ -1,0 +1,105 @@
+version: "3.7"
+
+services:
+  db:
+    build: postgres/
+    environment:
+      - POSTGRES_PASSWORD=secret
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./github-data:/data
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    ports:
+      - 9200:9200
+    environment:
+      - node.name=es01
+      - cluster.name=elastic-cluster
+      - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - node.name=es02
+      - cluster.name=elastic-cluster
+      - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01,es02
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.0
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash/postgresql-42.2.16.jar:/app/postgresql-42.2.16.jar
+    environment:
+      - LOG_LEVEL=warn
+      - LS_JAVA_OPTS=-Xms1g -Xmx1g
+    depends_on:
+      - es01
+      - es02
+    healthcheck:
+      test: bin/logstash -t
+      interval: 60s
+      timeout: 50s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=["http://es01:9200","http://es02:9200"]
+      - monitoring.ui.container.elasticsearch.enabled=false
+    depends_on:
+      - es01
+      - es02
+    healthcheck:
+      # Parse status.overall.state from Kibana's /api/status, failing silently
+      test: ["CMD-SHELL", "[ $$((curl -s -f localhost:5601/api/status || echo '{}') | python -c \"import sys, json; print json.load(sys.stdin).get('status',{}).get('overall',{}).get('state','')\") == \"green\" ] && echo 0 || echo 1"]
+      start_period: 30s
+      interval: 1m
+      timeout: 3s
+
+  setup:
+    build: setup/
+    volumes:
+      - ./kibana:/kibana-saved-objects
+    depends_on:
+      - kibana
+
+volumes:
+  esdata1:
+  esdata2:
