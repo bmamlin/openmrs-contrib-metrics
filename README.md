@@ -2,6 +2,8 @@
 
 An [ELK Stack](https://www.elastic.co/what-is/elk-stack) for OpenMRS community data.
 
+![OpenMRS Metrics](images/openmrs-metrics.png)
+
 ## What data?
 
 - GitHub events (commits, pull requests, comments, etc.) since 2014 within the
