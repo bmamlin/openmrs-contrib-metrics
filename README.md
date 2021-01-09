@@ -94,3 +94,15 @@ If you want to remove all loaded data, then purge the `pgdata` subfolder.
 If you download new data or make changes to github files, you must clear the
 `pgdata` subfolder for data to get reloaded. If the `pgdata` folder contains _any_
 data, postgres will not try to load any new data.
+
+## Troubleshooting
+
+If the stack fails to run, check the logs with:
+
+`docker-compose logs`
+
+If you see error message or messages of services being unreachable, scroll to the where the errors begin. If you see a message like "max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]", then increase virtual memory with:
+
+`sysctl -w vm.max_map_count=262144`
+
+To make the change permanent, you need to edit `/etc/sysctl.conf` and set `vm.max_map_count` to 262144 (from [stackoverflow](https://stackoverflow.com/a/51448773/5602641)).
