@@ -25,7 +25,7 @@ services:
       - discovery.seed_hosts=es02
       - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
     ulimits:
       memlock:
         soft: -1
@@ -46,7 +46,7 @@ services:
       - discovery.seed_hosts=es01
       - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
     ulimits:
       memlock:
         soft: -1
@@ -66,7 +66,7 @@ services:
       - ./logstash/postgresql-42.2.16.jar:/app/postgresql-42.2.16.jar
     environment:
       - LOG_LEVEL=warn
-      - LS_JAVA_OPTS=-Xms1g -Xmx1g
+      - LS_JAVA_OPTS=-Xms2g -Xmx2g
     depends_on:
       - es01
       - es02
