@@ -48,8 +48,9 @@ This repository includes an ELK Stack comprising:
 
 ## Requirements
 
-- Docker
-- Plenty of memory (e.g., 6+ GB allocated to Docker)
+- Docker (with [docker-compose](https://docs.docker.com/compose/install/))
+- 6+ GB of memory available
+- Sufficient virtual memory for Docker (`sysctl -w vm.max_map_count=262144`)
 
 **NOTE**: if you try running this stack and elasticsearch containers are exiting with
 error code 137, it is because they are running out of memory. If you want, you can monitor
@@ -57,17 +58,13 @@ Docker memory usage from a terminal with `docker ps -q | xargs docker stats --no
 
 ## Running the stack
 
-1. Clone this repository
+1. Clone this repository (`git clone https://github.com/bmamlin/openmrs-contrib-metrics`)
 2. Within the `github-data` folder, run `./download-data.sh` to download data files
 3. In the top folder, run `docker-compose up -d`
 4. Wait for Kibana to show up at http://localhost:5601/
 
-On a machine with 16 GB of memory (6 GB and 3 CPUs allocated to Docker), it takes up
-to 10 minutes before Kibana starts working and up to 45 minutes before all data are
-available, so be patient. On the other hand, if you create a
-[Digital Ocean](https://digitalocean.com) droplet with 64 GB of memory and allocate 4 GB
-to each elasticsearch instance and 30 GB to logstash, you can be up and running in 6 minutes
-(just don't forget to delete the droplet when done, since it costs \$0.5 USD per minute)
+On a machine with 8 GB of memory and 4 CPUs, it takes about 10 minutes to before
+all data are visible within Kibana.
 
 **TIP**: when browsing visualizations, be sure to set your date filter to something like
 "Last 10 years" to ensure you are seeing all data. The default may be set to "15
@@ -85,15 +82,19 @@ minutes", in which case you won't see any data.
 
 ## Stopping & cleaning up
 
+Shut down the docker containers and clear elasticsearch volumes:
+
 `docker-compose down -v`
 
-If you want to remove all loaded data, then purge the `pgdata` subfolder.
+Purge the postgres data:
+
+`rm -rf pgdata`
 
 ## Reloading data
 
 If you download new data or make changes to github files, you must clear the
-`pgdata` subfolder for data to get reloaded. If the `pgdata` folder contains _any_
-data, postgres will not try to load any new data.
+`pgdata` subfolder (`rm -rf pgdata`) for data to get reloaded. If the `pgdata` 
+folder contains _any_ data, postgres will not try to load any new data.
 
 ## Troubleshooting
 
@@ -101,8 +102,12 @@ If the stack fails to run, check the logs with:
 
 `docker-compose logs`
 
-If you see error message or messages of services being unreachable, scroll to the where the errors begin. If you see a message like "max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]", then increase virtual memory with:
+If you see error message or messages of services being unreachable, scroll to 
+where the errors begin. If you see a message like "max virtual memory areas 
+vm.max_map_count [65530] is too low, increase to at least [262144]", then 
+increase virtual memory with:
 
 `sysctl -w vm.max_map_count=262144`
 
-To make the change permanent, you need to edit `/etc/sysctl.conf` and set `vm.max_map_count` to 262144 (from [stackoverflow](https://stackoverflow.com/a/51448773/5602641)).
+To make the change permanent, you need to edit `/etc/sysctl.conf` and set 
+`vm.max_map_count` to 262144 (from [stackoverflow](https://stackoverflow.com/a/51448773/5602641)).
