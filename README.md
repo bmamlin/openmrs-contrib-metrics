@@ -63,15 +63,22 @@ Docker memory usage from a terminal with `docker ps -q | xargs docker stats --no
 3. In the top folder, run `docker-compose up -d`
 4. Wait for Kibana to show up at http://localhost:5601/
 
-On a machine with 8 GB of memory and 4 CPUs, it takes about 10 minutes to before
-all data are visible within Kibana.
+### Manual installation from scratch
 
-**NOTE**: When the stack is first built in a debian environment, you may see a 
+If you are new to git & Docker and are manually installing everything from scratch
+instead of using a machine pre-configured with git & Docker (like Digital Ocean provides for 
+droplets in its marketplace), reviewing [this issue](https://github.com/bmamlin/openmrs-contrib-metrics/issues/1#issue-785815236) 
+might save you some time.
+
+### Tips on running the stack
+
+* On a machine with 8 GB of memory and 4 CPUs, it takes about 10 minutes to before
+all data are visible within Kibana.
+* When the stack is first built in a debian environment, you may see a 
 warning message like "debconf: delaying package configuration, since apt-utils 
 is not installed" (e.g., when the postgres image is being initially built). This 
 warning can safely be ignored.
-
-**TIP**: when browsing visualizations, be sure to set your date filter to something like
+* When browsing visualizations, be sure to set your date filter to something like
 "Last 10 years" to ensure you are seeing all data. The default may be set to "15
 minutes", in which case you won't see any data.
 
