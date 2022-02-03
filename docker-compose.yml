@@ -16,7 +16,7 @@ services:
       retries: 5
 
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
     ports:
       - 9200:9200
     environment:
@@ -39,7 +39,7 @@ services:
       retries: 3
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
     environment:
       - node.name=es02
       - cluster.name=elastic-cluster
@@ -60,7 +60,7 @@ services:
       retries: 3
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.10.0
+    image: docker.elastic.co/logstash/logstash:7.17.0
     volumes:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash/postgresql-42.2.16.jar:/app/postgresql-42.2.16.jar
@@ -77,7 +77,7 @@ services:
       retries: 5
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.0
+    image: docker.elastic.co/kibana/kibana:7.17.0
     ports:
       - 5601:5601
     environment:

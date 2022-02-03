@@ -19,7 +19,13 @@ a query like this:
 SELECT *
 FROM `githubarchive.year.*`
 WHERE _TABLE_SUFFIX BETWEEN '2020' AND '2020'
-AND (repo.name like '%openmrs%' OR org.login='openmrs')
+AND (
+	repo.name IN (
+		SELECT name FROM `openmrs-github-stats.openmrs_events.openmrs-repos`
+	)
+  OR LOWER(repo.name) like '%openmrs%'
+  OR org.login='openmrs'
+)
 ```
 
 These GitHub events by year are extracted as [newline delimited JSON](http://ndjson.org/)
@@ -38,13 +44,17 @@ This repository includes an ELK Stack comprising:
 
 - Extracting data from the github archive into files for this stack is a manual process
 - Data only go back to 2014, because that's how far back the github archive goes
-- Only events for public repositories under the OpenMRS organization or with "openmrs" in
-  the repository name are included. OpenMRS-related work in GitHub outside of the OpenMRS
-  organization within repositories that do _not_ have "openmrs" in the name are not
-  included. This means, for example, work in Micro Frontend repositories (which chose
+- Only events for public repositories under the OpenMRS organization, with 
+  "openmrs" in the repository name, or that have been manually collected and their
+  name included in the `openmrs-repos` table within our BigQuery project are
+  included. OpenMRS-related work in GitHub outside of the OpenMRS organization within
+  repositories that do _not_ have "openmrs" in the name and have not been manually
+  added to the `openmrs-repos` table in BigQuery are not included in these stats.
+  This means, for example, work in Micro Frontend repositories (which chose
   to use a naming convention that does not include "openmrs") outside of the
   OpenMRS organization (e.g., by other organizations or in personal forks) are not
-  included.
+  included unless we manually include them by grepping them from a GitHub
+  web search (see details [here](https://talk.openmrs.org/t/2021-community-contribution-stats-by-quarter/35772/9?u=burke)).
 
 ## Requirements
 
