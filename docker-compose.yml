@@ -32,6 +32,7 @@ services:
         hard: -1
     volumes:
       - esdata1:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f localhost:9200/_cluster/health || exit 1"]
       interval: 30s
@@ -53,6 +54,7 @@ services:
         hard: -1
     volumes:
       - esdata2:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f localhost:9200/_cluster/health || exit 1"]
       interval: 30s

@@ -1,0 +1,7 @@
+cluster.name: "elastic-cluster"
+network.host: 0.0.0.0
+node.name: "${node.name}"
+discovery.seed_hosts: "${discovery.seed_hosts}"
+cluster.initial_master_nodes: "${cluster.initial_master_nodes}"
+bootstrap.memory_lock: "${bootstrap.memory_lock}"
+#path.repo: "${path.repo}"
