@@ -90,7 +90,7 @@ services:
       - es02
     healthcheck:
       # Parse status.overall.state from Kibana's /api/status, failing silently
-      test: ["CMD-SHELL", "[ $$((curl -s -f localhost:5601/api/status || echo '{}') | python -c \"import sys, json; print json.load(sys.stdin).get('status',{}).get('overall',{}).get('state','')\") == \"green\" ] && echo 0 || echo 1"]
+      test: ["CMD-SHELL", "[ $(curl -s -f localhost:5601/api/status | sed -r 's/^.*?\"status\":.*?\"overall\":.*?\"state\":\\s*\"([^\"]+)\".*$/\\1/') == \"green\" ] && echo 0 || echo 1"]
       start_period: 30s
       interval: 1m
       timeout: 3s
