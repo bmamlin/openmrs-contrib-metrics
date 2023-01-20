@@ -74,7 +74,7 @@ Docker memory usage from a terminal with `docker ps -q | xargs docker stats --no
 4. Wait for Kibana to show up at http://localhost:5601/
 5. Once the data have loaded (set date filter to last 15 years – back to at least 2014 – and 
    open visualization "Event Counts" to see total number of events loaded... 2014-2022 includes 
-   496,180 events), you'll need to manually add the filter for bots.
+   532,944 events), you'll need to manually add the filter for bots.
 
 ## Manually adding "NOT bot" filter to exclude bots
 
