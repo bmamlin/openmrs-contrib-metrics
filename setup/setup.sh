@@ -1,8 +1,8 @@
 #!/bin/sh
 
 KIBANA_URL=kibana:5601
-PATH_TO_STATE=".status.overall.state"
-TARGET_STATE="green"
+PATH_TO_STATE=".status.overall.level"
+TARGET_STATE="available"
 SECONDS_TO_WAIT=3600 # 60 min 
 SECONDS_BETWEEN_CHECKS=30
 VERBOSE=true

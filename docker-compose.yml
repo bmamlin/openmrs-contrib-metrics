@@ -16,7 +16,7 @@ services:
       retries: 5
 
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
     ports:
       - 127.0.0.1:9200:9200
     environment:
@@ -40,7 +40,7 @@ services:
       retries: 3
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
     environment:
       - node.name=es02
       - cluster.name=elastic-cluster
@@ -62,7 +62,7 @@ services:
       retries: 3
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.0
+    image: docker.elastic.co/logstash/logstash:8.6.0
     volumes:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash/postgresql-42.2.16.jar:/app/postgresql-42.2.16.jar
@@ -79,7 +79,7 @@ services:
       retries: 5
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.0
+    image: docker.elastic.co/kibana/kibana:8.6.0
     ports:
       - 127.0.0.1:5601:5601
     environment:
@@ -90,7 +90,7 @@ services:
       - es02
     healthcheck:
       # Parse status.overall.state from Kibana's /api/status, failing silently
-      test: ["CMD-SHELL", "[ $(curl -s -f localhost:5601/api/status | sed -r 's/^.*?\"status\":.*?\"overall\":.*?\"state\":\\s*\"([^\"]+)\".*$/\\1/') == \"green\" ] && echo 0 || echo 1"]
+      test: ["CMD-SHELL", "[ $(curl -s -f localhost:5601/api/status | sed -r 's/^.*?\"status\":.*?\"overall\":.*?\"level\":\\s*\"([^\"]+)\".*$/\\1/') == \"available\" ] && echo 0 || echo 1"]
       start_period: 30s
       interval: 1m
       timeout: 3s
